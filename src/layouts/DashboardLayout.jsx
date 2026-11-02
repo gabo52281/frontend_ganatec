@@ -17,7 +17,8 @@ import {
   LogOut,
   Menu,
   X,
-  UsersRound
+  UsersRound,
+  BarChart3
 } from "lucide-react";
 
 import { GiCow } from "react-icons/gi";
@@ -86,6 +87,12 @@ const DashboardLayout = ({ children }) => {
   ruta: "/finanzas",
   rolesPermitidos: ["administrador", "superadministrador"],
 },
+
+    {
+      nombre: "Reportes",
+      icono: BarChart3,
+      ruta: "/reportes",
+    },
 
     {
       nombre: "Alertas",
