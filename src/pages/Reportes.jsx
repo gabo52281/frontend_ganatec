@@ -11,9 +11,13 @@ const TIPOS = [
   { id:"salud", nombre:"Salud animal", descripcion:"Eventos, tratamientos y vacunaciones" },
   { id:"finanzas", nombre:"Finanzas", descripcion:"Ingresos, gastos y balance registrado" },
 ];
-const fechaBogota = () => new Intl.DateTimeFormat("en-CA", {
-  timeZone:"America/Bogota",year:"numeric",month:"2-digit",day:"2-digit",
-}).format(new Date());
+const fechaBogota = () => {
+  const partes = new Intl.DateTimeFormat("en-US", {
+    timeZone:"America/Bogota",year:"numeric",month:"2-digit",day:"2-digit",
+  }).formatToParts(new Date());
+  const fecha = Object.fromEntries(partes.map(({type,value})=>[type,value]));
+  return fecha.year+"-"+fecha.month+"-"+fecha.day;
+};
 const formato = (valor,moneda=false) => {
   const numero=Number(valor ?? 0);
   return new Intl.NumberFormat("es-CO", moneda
@@ -56,7 +60,6 @@ export default function Reportes(){
   const titulo=TIPOS.find(x=>x.id===tipo)?.nombre||"Reportes";
   const filtros=useMemo(()=>({desde,hasta,page,pageSize,vista}),[desde,hasta,page,pageSize,vista]);
   useEffect(()=>{
-    const abort=new AbortController();
     let activo=true;
     setCargando(true);
     setError("");
@@ -65,7 +68,7 @@ export default function Reportes(){
     }).catch(e=>{
       if(activo){setDatos(null);setError(e.response?.data?.message||"No fue posible consultar el reporte.");}
     }).finally(()=>{if(activo)setCargando(false);});
-    return ()=>{activo=false;abort.abort();};
+    return ()=>{activo=false;};
   },[tipo,filtros,actualizacion]);
   const cambiarTipo=(nuevo)=>{setTipo(nuevo);setPage(1);};
   const max=datos?.paginacion?.totalPages||0;
