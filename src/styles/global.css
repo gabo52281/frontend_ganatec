@@ -577,6 +577,27 @@ input {
   min-width: 0;
 }
 
+/* 03.3 Chat: altura limitada al viewport, sin afectar otros módulos. */
+.main-wrapper--ia {
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.main-content--ia {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  padding-block: clamp(12px, 1.6vw, 20px);
+}
+
+.sidebar-overlay {
+  display: none;
+}
+
 /* =========================================================
    04. DASHBOARD
    Jerarquía de información, indicadores y paneles operativos.
@@ -849,6 +870,17 @@ input {
       translateX(0);
   }
 
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    border: none;
+    padding: 0;
+    background: rgba(7, 25, 14, 0.5);
+    cursor: pointer;
+  }
+
   .sidebar-cerrar,
   .menu-mobile {
     display: block;
@@ -870,6 +902,10 @@ input {
 
   .main-content {
     padding: 20px;
+  }
+
+  .main-content--ia {
+    padding: 12px 16px 14px;
   }
 
   .dashboard-grid {
@@ -983,6 +1019,140 @@ input {
 .tabla-ganatec .acciones-tabla { flex-wrap: nowrap; }
 .tabla-ganatec .boton-tabla { white-space: nowrap; }
 
+/* 06.1.1 Presentación uniforme y tarjetas adaptables.
+   Las tablas de Salud y Reproducción conservan sus reglas propias. */
+.tabla-contenedor:has(.tabla-apilable) {
+  min-width: 0;
+  isolation: isolate;
+}
+
+.tabla-apilable {
+  width: 100%;
+  min-width: 0;
+}
+
+.tabla-apilable th,
+.tabla-apilable td {
+  padding: 13px clamp(10px, 1.15vw, 16px);
+}
+
+.tabla-apilable th {
+  font-size: 11px;
+  letter-spacing: .025em;
+  color: #556b5d;
+}
+
+.tabla-apilable td {
+  overflow-wrap: anywhere;
+  color: #334339;
+}
+
+.tabla-apilable tbody tr:focus-within {
+  background: #f0f8f2;
+}
+
+.tabla-apilable .descripcion-tabla {
+  max-width: 48ch;
+  overflow-wrap: anywhere;
+  line-height: 1.5;
+}
+
+.tabla-apilable .acciones-tabla {
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.tabla-apilable .boton-tabla,
+.tabla-apilable .boton-secundario {
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+@media (max-width: 760px) {
+  .tabla-contenedor:has(.tabla-apilable) {
+    border: 0;
+    border-radius: 0;
+    overflow: visible;
+    background: transparent;
+  }
+
+  .tabla-apilable,
+  .tabla-apilable tbody {
+    display: block;
+    width: 100%;
+  }
+
+  .tabla-apilable thead {
+    display: none;
+  }
+
+  .tabla-apilable tbody tr {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 18px;
+    padding: 16px;
+    margin-bottom: 12px;
+    border: 1px solid #e1eae3;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 3px 12px rgba(20, 55, 34, .035);
+  }
+
+  .tabla-apilable tbody tr:nth-child(even) {
+    background: #fff;
+  }
+
+  .tabla-apilable td {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 0;
+    width: 100%;
+    gap: 5px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    overflow-wrap: anywhere;
+    white-space: normal;
+  }
+
+  .tabla-apilable td::before {
+    content: attr(data-label);
+    display: block;
+    color: #66786c;
+    font-size: 10px;
+    font-weight: 750;
+    letter-spacing: .065em;
+    text-transform: uppercase;
+  }
+
+  .tabla-apilable td:last-child {
+    grid-column: 1 / -1;
+    padding-top: 8px;
+    border-top: 1px solid #edf1ee;
+  }
+
+  .tabla-apilable .descripcion-tabla {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .tabla-apilable tbody tr {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+    padding: 14px;
+  }
+
+  .tabla-apilable td:last-child {
+    grid-column: auto;
+  }
+}
+
 /*
   No imponemos anchos mínimos a todas las tablas.
   Salud y Reproducción tienen una presentación responsive propia;
@@ -1081,6 +1251,28 @@ input {
 .lista-header span {
   color: #8a928d;
   font-size: 12px;
+}
+
+/* Encabezados de listados: controles alineados sin forzar scroll horizontal. */
+.lista-header {
+  flex-wrap: wrap;
+  gap: 12px 16px;
+}
+
+.lista-header > * {
+  min-width: 0;
+}
+
+@media (max-width: 600px) {
+  .lista-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .lista-header .buscador {
+    width: 100%;
+    max-width: 100%;
+  }
 }
 
 /* ---------------------------------------------------------
@@ -3664,6 +3856,23 @@ button.dashboard-card span {
 }
 
 
+/* 17.8.7.1 Legibilidad de importes y movimientos. */
+.tabla-dashboard.tabla-apilable td:last-child strong {
+  font-variant-numeric: tabular-nums;
+  color: #153d27;
+  font-weight: 750;
+}
+
+.tabla-dashboard.tabla-apilable td {
+  line-height: 1.55;
+}
+
+@media (max-width: 760px) {
+  .tabla-dashboard.tabla-apilable td:last-child {
+    align-items: flex-start;
+  }
+}
+
 /* =========================================================
    17.8.8 ESTADOS VACÍOS
 ========================================================= */
@@ -4903,6 +5112,21 @@ textarea {
     rgba(0,0,0,.12);
 }
 
+/* Identificar con claridad el módulo IA que está abierto. */
+.sidebar-ia[aria-current="page"] {
+  background: linear-gradient(135deg, #2b7848, #1f5034);
+  box-shadow: inset 3px 0 0 #8de1a6;
+  border-color: rgba(165, 230, 181, 0.26);
+}
+
+.sidebar-ia:focus-visible,
+.nav-item:focus-visible,
+.menu-mobile:focus-visible,
+.sidebar-cerrar:focus-visible {
+  outline: 2px solid #8de1a6;
+  outline-offset: 2px;
+}
+
 .sidebar-ia > svg {
   flex-shrink: 0;
   color: #7be39d;
@@ -4918,14 +5142,20 @@ textarea {
 --------------------------------------------------------- */
 
 .ia-ganatec-page {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
   width: 100%;
+  height: 100%;
   min-width: 0;
+  min-height: 0;
   max-width: none;
   margin: 0;
 }
 
 .ia-ganatec-header {
-  margin-bottom: 22px;
+  flex: 0 0 auto;
+  margin-bottom: 14px;
 }
 
 .ia-ganatec-identidad {
@@ -5001,22 +5231,24 @@ textarea {
 --------------------------------------------------------- */
 
 .ia-ganatec-contenedor {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
   width: 100%;
+  min-width: 0;
+  min-height: 0;
 }
 
 .ia-ganatec-chat {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
   overflow: hidden;
-
-  border:
-    1px solid #e1e8e3;
-
+  border: 1px solid #e1e8e3;
   border-radius: 18px;
-
-  background: #ffffff;
-
-  box-shadow:
-    0 8px 28px
-    rgba(17, 55, 32, .055);
+  background: #fff;
+  box-shadow: 0 8px 28px rgba(17, 55, 32, .055);
 }
 
 
@@ -5025,24 +5257,16 @@ textarea {
 --------------------------------------------------------- */
 
 .ia-ganatec-mensajes {
-  min-height: 330px;
-  max-height:
-    calc(100vh - 390px);
-
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: none;
   overflow-y: auto;
-
-  padding: 26px 28px;
-
-  background:
-    linear-gradient(
-      180deg,
-      #fbfdfb 0%,
-      #ffffff 100%
-    );
-
+  overflow-x: hidden;
+  overscroll-behavior-y: contain;
+  padding: 22px 24px;
+  background: linear-gradient(180deg, #fbfdfb 0%, #ffffff 100%);
   scrollbar-width: thin;
-  scrollbar-color:
-    #cbd7cf transparent;
+  scrollbar-color: #cbd7cf transparent;
 }
 
 .ia-mensaje {
@@ -5087,7 +5311,8 @@ textarea {
 }
 
 .ia-mensaje-contenido {
-  max-width: 78%;
+  min-width: 0;
+  max-width: min(86%, 900px);
 }
 
 .ia-mensaje-usuario
@@ -5185,10 +5410,10 @@ textarea {
 --------------------------------------------------------- */
 
 .ia-sugerencias {
-  padding:
-    0 28px 24px;
-
-  background: #ffffff;
+  max-width: 760px;
+  margin: 2px 0 12px 45px;
+  padding: 0;
+  background: transparent;
 }
 
 .ia-sugerencias-titulo {
@@ -5260,52 +5485,40 @@ textarea {
 --------------------------------------------------------- */
 
 .ia-ganatec-error {
-  margin:
-    0 28px 15px;
-
+  margin: 4px 0 14px 45px;
   padding: 11px 13px;
-
-  border:
-    1px solid #f0caca;
-
+  border: 1px solid #f0caca;
   border-radius: 10px;
-
   background: #fff6f6;
-
   color: #a43d3d;
-
   font-size: 12px;
 }
 
 
 /* ---------------------------------------------------------
    20.8 Campo para preguntar
+   El compositor permanece visible al pie de la conversación.
 --------------------------------------------------------- */
+
+.ia-ganatec-compositor {
+  flex: 0 0 auto;
+  padding: 13px 20px 12px;
+  border-top: 1px solid #e6ece7;
+  background: #fff;
+  box-shadow: 0 -5px 18px rgba(24, 63, 38, .035);
+}
 
 .ia-ganatec-input {
   display: flex;
   align-items: flex-end;
   gap: 10px;
-
-  margin:
-    0 20px 10px;
-
+  margin: 0;
   padding: 8px;
-
-  border:
-    1px solid #d9e3dc;
-
+  border: 1px solid #d9e3dc;
   border-radius: 14px;
-
-  background: #ffffff;
-
-  box-shadow:
-    0 3px 13px
-    rgba(18, 65, 36, .045);
-
-  transition:
-    border-color .16s ease,
-    box-shadow .16s ease;
+  background: #fff;
+  box-shadow: 0 3px 13px rgba(18, 65, 36, .045);
+  transition: border-color .16s ease, box-shadow .16s ease;
 }
 
 .ia-ganatec-input:focus-within {
@@ -5319,7 +5532,8 @@ textarea {
 .ia-ganatec-input textarea {
   width: 100%;
   min-height: 42px;
-  max-height: 130px;
+  max-height: 128px;
+  overflow-y: auto;
 
   resize: none;
 
@@ -5386,18 +5600,11 @@ textarea {
 
 .ia-ganatec-aviso {
   max-width: 760px;
-
-  margin:
-    0 auto;
-
-  padding:
-    0 20px 18px;
-
-  color: #8a948d;
-
+  margin: 9px auto 0;
+  padding: 0;
+  color: #7d8980;
   font-size: 10px;
-  line-height: 1.5;
-
+  line-height: 1.45;
   text-align: center;
 }
 
@@ -5413,11 +5620,8 @@ textarea {
   }
 
   .ia-ganatec-mensajes {
-    max-height: none;
-    min-height: 330px;
-
-    padding:
-      22px 20px;
+    min-height: 0;
+    padding: 18px 18px;
   }
 
   .ia-mensaje-contenido {
@@ -5453,10 +5657,8 @@ textarea {
   }
 
   .ia-ganatec-mensajes {
-    min-height: 300px;
-
-    padding:
-      18px 14px;
+    min-height: 0;
+    padding: 14px 12px;
   }
 
   .ia-mensaje {
@@ -5480,26 +5682,56 @@ textarea {
   }
 
   .ia-sugerencias {
-    padding:
-      0 14px 18px;
+    margin: 0 0 12px;
+    padding: 0;
   }
 
   .ia-sugerencias-grid {
     grid-template-columns: 1fr;
   }
 
+  .ia-ganatec-compositor {
+    padding: 10px 12px 12px;
+  }
+
   .ia-ganatec-input {
-    margin:
-      0 12px 9px;
+    margin: 0;
   }
 
   .ia-ganatec-error {
-    margin:
-      0 14px 12px;
+    margin: 0 0 12px;
   }
 
 }
 
+
+/* El historial debe seguir siendo utilizable en pantallas bajas
+   y con el teclado virtual abierto. */
+@media (max-height: 620px) {
+  .ia-ganatec-header {
+    margin-bottom: 8px;
+  }
+
+  .ia-ganatec-identidad p {
+    display: none;
+  }
+
+  .ia-ganatec-icono {
+    width: 40px;
+    height: 40px;
+  }
+
+  .ia-ganatec-compositor {
+    padding-block: 8px;
+  }
+}
+
+/* Controles accesibles sin cambiar el diseño de GANATEC. */
+.ia-sugerencias-grid button:focus-visible,
+.ia-ganatec-input button:focus-visible {
+  outline: 3px solid rgba(36, 132, 74, .32);
+  outline-offset: 2px;
+}
 
 /* ---------------------------------------------------------
    20.11 Formato de respuestas de IA GANATEC
@@ -5602,6 +5834,20 @@ textarea {
 
 .ia-markdown li {
   margin-bottom: 5px;
+}
+
+/* Mostrar bloques de código extensos sin ensanchar el chat. */
+.ia-markdown pre {
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #f1f5f2;
+  white-space: pre;
+}
+
+.ia-markdown code {
+  font-size: .93em;
 }
 
 /* Contenedor adaptable de tablas */
